@@ -1,0 +1,124 @@
+syntax = "proto3";
+package csProto;
+​
+service CSProto {
+    //用户注册
+    //用户登录
+    rpc userLogin(CSUserLoginReq) returns (SCRsp);
+    //用户退出
+    rpc userLogout(CSUserLogoutReq) returns (SCRsp);
+    //角色登录
+    rpc roleLogin(CSRoleLoginReq) returns (SCRsp);
+    //角色退出
+    rpc roleLogout(CSRoleLogoutReq) returns (SCRsp);
+    //查询用户下的所有角色信息
+    rpc queryUserAllRole(CSQueryUserAllRoleReq) returns (SCRsp);
+    //查询用户下的单个角色信息
+    rpc queryUserRole(CSQueryUserRoleReq) returns (SCRsp);
+    //批量查询多个用户的所有角色信息
+    rpc batchQueryUserAllRole(CSBatchQueryUserAllRoleReq) returns (SCRsp);
+
+}
+
+enum errno {
+    UNKNOW = 0;
+    SUCCESS = 1;
+    USER_ALREADY_LOGIN = 2;
+    USER_UNLOGIN = 3;
+}
+
+/*************************************/
+
+
+message CSUserLoginReq {
+    string userName = 1;
+}
+
+message CSUserLogoutReq {
+    int32 user_id = 1;
+}
+
+message CSRoleLoginReq {
+    int32 user_id = 1;
+    int32 role_id = 2;
+}
+
+message CSRoleLogoutReq {
+    int32 user_id = 1;
+}
+
+message CSQueryUserAllRoleReq {
+    int32 user_id = 1;
+}
+
+message CSQueryUserRoleReq {
+    int32 user_id = 1;
+    int32 role_id = 2;
+}
+
+message CSBatchQueryUserAllRoleReq {
+    repeated int32 user_ids = 1;
+}
+
+/**************************************/
+
+message SCRsp {
+    int32 errcode = 1;
+    SCInfo scRsp = 2;
+}
+
+message SCInfo {
+    SCUserLoginRsp userLoginRsp = 1;
+    SCRoleLoginRsp roleLoginRsp = 2;
+    SCQueryUserAllRoleRsp queryUserAllRoleRsp = 3;
+    SCQueryUserRoleRsp queryUserRoleRsp = 4;
+    SCBatchQueryUserAllRoleRsp batchQueryUserAllRoleRsp = 5;
+}
+
+message SCUserLoginRsp {
+    repeated SimpleRoleInfo role_list = 1;
+}
+
+message SCRoleLoginRsp {
+    DetailRoleInfo detail_role = 1;
+}
+
+message SCQueryUserAllRoleRsp {
+    repeated DetailRoleInfo detail_roles = 1;
+}
+
+message SCQueryUserRoleRsp {
+    DetailRoleInfo role_info = 1;
+}
+
+message SCBatchQueryUserAllRoleRsp {
+    repeated BatchQueryUserRole user_roles = 1;
+}
+
+message BatchQueryUserRole {
+    int32 user_id = 1;
+    repeated DetailRoleInfo detail_roles = 2;
+}
+
+message SimpleRoleInfo {
+  int32 role_id = 1;
+  int32 user_id = 2;
+  string name = 3;
+  int32 zone_id = 4;//区服id
+}
+
+message DetailRoleInfo {
+    int32 role_id = 1;
+    int32 user_id = 2;
+    string name = 3;
+    int32 zone_id = 4; //区服id
+    int32 sex = 5; //1男 2女
+    int32 level = 6;
+    RoleSkin roleSkin = 7;
+}
+
+message RoleSkin {
+    int32 skin_id = 1;
+    int32 skin_color = 2;
+    //...
+}
